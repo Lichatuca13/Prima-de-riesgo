@@ -115,9 +115,13 @@ function graficaPrima() {
   const [fu, vu] = serie.at(-1);
   if (fm !== fu) {
     svg("circle", { cx: x(fm), cy: y(vm), r: 3.5, class: "punto-prima" }, dibujo);
-    const derecha = x(fm) < ancho * 0.66;
-    svg("text", { x: x(fm) + (derecha ? 12 : -12), y: y(vm) + 5, "text-anchor": derecha ? "start" : "end", class: "anotacion" },
-      dibujo, `${mayuscula(fecha(fm))}: ${numero(vm, 0)} puntos`);
+    const nota = svg("text", { x: x(fm) + 12, y: y(vm) + 5, class: "anotacion" }, dibujo,
+      `${mayuscula(fecha(fm))}: ${numero(vm, 0)} puntos`);
+    if (nota.getBBox().x + nota.getBBox().width > ancho) {
+      nota.textContent = "";
+      svg("tspan", { x: x(fm) + 12 }, nota, `${mayuscula(fecha(fm))}:`);
+      svg("tspan", { x: x(fm) + 12, dy: "1.25em" }, nota, `${numero(vm, 0)} puntos`);
+    }
   }
   svg("circle", { cx: x(fu), cy: y(vu), r: 4.5, class: "punto-prima" }, dibujo);
   svg("text", { x: x(fu) + 10, y: y(vu) + 5, class: "lectura-valor", fill: "var(--prima)" }, dibujo, numero(vu, 0));
@@ -133,8 +137,11 @@ function lectura(dibujo, serie, x, y, m, alto) {
   const guia = svg("line", { y1: m.arriba - 6, y2: alto - m.abajo, class: "guia" }, capa);
   const punto = svg("circle", { r: 4.5, class: "punto-prima" }, capa);
   const fondo = svg("rect", { class: "lectura-fondo" }, capa);
-  const textoFecha = svg("text", { class: "lectura-fecha" }, capa);
-  const textoValor = svg("text", { class: "lectura-valor" }, capa);
+  const lineas = [
+    [svg("text", { class: "lectura-fecha" }, capa), m.arriba - 14],
+    [svg("text", { class: "lectura-valor" }, capa), m.arriba + 4],
+    [svg("text", { class: "lectura-fecha" }, capa), m.arriba + 21],
+  ];
   const porMes = new Map(estado.datos.decisiones.map((d) => [d.fecha.slice(0, 7), d]));
 
   const ver = (i) => {
@@ -146,21 +153,23 @@ function lectura(dibujo, serie, x, y, m, alto) {
     guia.setAttribute("x2", x(f));
     punto.setAttribute("cx", x(f));
     punto.setAttribute("cy", y(v));
-    textoFecha.textContent = mayuscula(fecha(f)) + (decision ? `. El BCE deja el depósito en el ${numero(decision.deposito, 2)} %` : "");
-    textoValor.textContent = `${numero(v, 1)} puntos`;
-    const derecha = x(f) < dibujo.viewBox.baseVal.width * 0.62;
-    for (const [texto, alto_] of [[textoFecha, m.arriba - 14], [textoValor, m.arriba + 4]]) {
-      texto.setAttribute("x", x(f) + (derecha ? 10 : -10));
-      texto.setAttribute("y", alto_);
-      texto.setAttribute("text-anchor", derecha ? "start" : "end");
+    const textos = [mayuscula(fecha(f)), `${numero(v, 1)} puntos`,
+      decision ? `Depósito del BCE al ${numero(decision.deposito, 2)} %` : ""];
+    lineas.forEach(([nodo], n) => { nodo.textContent = textos[n]; });
+    const largo = Math.max(...lineas.map(([nodo]) => nodo.getComputedTextLength()));
+    const derecha = x(f) + 10 + largo <= dibujo.viewBox.baseVal.width || x(f) - 10 - largo < 0;
+    for (const [nodo, alto_] of lineas) {
+      nodo.setAttribute("x", x(f) + (derecha ? 10 : -10));
+      nodo.setAttribute("y", alto_);
+      nodo.setAttribute("text-anchor", derecha ? "start" : "end");
     }
-    const caja = textoFecha.getBBox();
-    const caja2 = textoValor.getBBox();
-    const izquierda = Math.min(caja.x, caja2.x) - 6;
+    const visibles = lineas.filter(([nodo]) => nodo.textContent).map(([nodo]) => nodo.getBBox());
+    const izquierda = Math.min(...visibles.map((c) => c.x)) - 6;
+    const arriba = visibles[0].y - 4;
     fondo.setAttribute("x", izquierda);
-    fondo.setAttribute("y", caja.y - 4);
-    fondo.setAttribute("width", Math.max(caja.x + caja.width, caja2.x + caja2.width) - izquierda + 6);
-    fondo.setAttribute("height", caja2.y + caja2.height - caja.y + 8);
+    fondo.setAttribute("y", arriba);
+    fondo.setAttribute("width", Math.max(...visibles.map((c) => c.x + c.width)) - izquierda + 6);
+    fondo.setAttribute("height", Math.max(...visibles.map((c) => c.y + c.height)) - arriba + 4);
   };
   const cercano = (evento) => {
     const punto_ = dibujo.createSVGPoint();
@@ -204,7 +213,7 @@ function graficaDeposito() {
   const { dibujo, ancho, alto } = lienzo(caja, 250);
   const decisiones = estado.datos.decisiones;
   const fin = estado.datos.calculado.slice(0, 10);
-  const m = { arriba: 20, derecha: 56, abajo: 30, izquierda: 44 };
+  const m = { arriba: 20, derecha: 64, abajo: 30, izquierda: 44 };
   const ey = escala(Math.min(0, ...decisiones.map((d) => d.deposito)), Math.max(...decisiones.map((d) => d.deposito)));
   const t0 = enMeses(decisiones[0].fecha);
   const t1 = enMeses(fin);
@@ -247,7 +256,7 @@ function graficaCurva() {
   const caja = el("lienzo-curva");
   const { dibujo, ancho, alto } = lienzo(caja, 250);
   const { plazos } = estado.datos.curva;
-  const m = { arriba: 20, derecha: 92, abajo: 30, izquierda: 40 };
+  const m = { arriba: 20, derecha: 92, abajo: 30, izquierda: 46 };
   const todos = plazos.flatMap((p) => [p.hoy, p.antes]).filter((v) => v !== null);
   const ey = escala(Math.min(...todos) - 0.1, Math.max(...todos) + 0.1);
   const x = (i) => m.izquierda + i / (plazos.length - 1) * (ancho - m.izquierda - m.derecha);
