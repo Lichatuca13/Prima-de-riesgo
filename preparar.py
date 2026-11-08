@@ -16,7 +16,7 @@ import time
 from pathlib import Path
 
 AQUI = Path(__file__).resolve().parent
-PAQUETES = ("fastapi", "uvicorn", "certifi", "pytest", "httpx")
+PAQUETES = ("fastapi", "uvicorn", "certifi", "pytest", "httpx2")
 
 
 def linea(bien: bool, texto: str) -> None:
