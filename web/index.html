@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prima de riesgo de España</title>
+<meta name="description" content="La prima de riesgo de España con datos oficiales del BCE: cuánto paga de más España que Alemania por su deuda a diez años.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="/estilo.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 24 L10 20 L15 22 L21 9 L29 13' fill='none' stroke='%23C4122F' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+<header class="cabecera">
+  <p class="marca">Monitor de la prima de riesgo</p>
+  <p class="actualizado" id="actualizado"></p>
+</header>
+
+<main id="contenido" aria-live="polite">
+  <section class="titular">
+    <h1 id="titular">Cargando los datos del BCE…</h1>
+    <p class="entradilla" id="entradilla"></p>
+    <p class="contexto" id="contexto"></p>
+  </section>
+
+  <section class="grafica-prima" id="bloque-prima" hidden>
+    <div class="grafica-cabeza">
+      <h2 class="visually-hidden">La prima de riesgo mes a mes</h2>
+      <div class="rango" role="group" aria-label="Periodo de la gráfica">
+        <button type="button" data-desde="todo" aria-pressed="true">Toda la serie</button>
+        <button type="button" data-desde="5" aria-pressed="false">Últimos cinco años</button>
+      </div>
+    </div>
+    <div class="lienzo" id="lienzo-prima" tabindex="0"></div>
+    <p class="pie">Media mensual, en puntos básicos. Las marcas de abajo son las decisiones del BCE sobre el tipo de depósito: hacia arriba, subidas; hacia abajo, bajadas. Con el ratón o las flechas del teclado, el valor de cada mes.</p>
+    <details class="tabla-datos">
+      <summary>Los últimos 24 meses en una tabla</summary>
+      <table id="tabla-prima"><thead><tr><th scope="col">Mes</th><th scope="col">Prima, en puntos básicos</th></tr></thead><tbody></tbody></table>
+    </details>
+  </section>
+
+  <section class="cifras" id="bloque-cifras" hidden>
+    <h2 class="visually-hidden">Las cifras</h2>
+    <dl id="cifras"></dl>
+  </section>
+
+  <section class="dos" id="bloque-bce" hidden>
+    <div class="texto">
+      <h2 id="bce-titular"></h2>
+      <p id="bce-texto"></p>
+      <p class="nota" id="bce-comprobacion"></p>
+    </div>
+    <div class="lienzo pequeno" id="lienzo-deposito"></div>
+  </section>
+
+  <section class="dos" id="bloque-curva" hidden>
+    <div class="texto">
+      <h2 id="curva-titular"></h2>
+      <p id="curva-texto"></p>
+    </div>
+    <div class="lienzo pequeno" id="lienzo-curva"></div>
+  </section>
+
+  <section class="explicacion" id="bloque-explicacion" hidden>
+    <h2>Explicado para quien no sabe de finanzas</h2>
+    <p class="parrafo" id="explicacion">Pidiendo la explicación al modelo…</p>
+    <p class="nota" id="explicacion-nota"></p>
+  </section>
+</main>
+
+<footer class="pie-pagina" id="pie" hidden>
+  <h2>De dónde sale cada dato</h2>
+  <ul id="fuentes"></ul>
+  <p id="licencia">Fuente: estadísticas del Banco Central Europeo. La prima de riesgo, sus cambios y su máximo son elaboración propia con esos datos.</p>
+  <p id="avisos"></p>
+  <p>No es una recomendación de inversión. Hecho en el Máster en Finanzas Cuantitativas y Métodos Computacionales de la Universidad de las Hespérides.</p>
+</footer>
+
+<script src="/panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+:root {
+  --papel: #F3F4EF;
+  --tinta: #13212E;
+  --pizarra: #5A6672;
+  --regla: #D6DAD2;
+  --prima: #C4122F;
+  --antes: #8A96A0;
+  --serif: "Spectral", Georgia, "Times New Roman", serif;
+  --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ancho: 68rem;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font: 400 1.0625rem/1.6 var(--sans);
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+a:hover { color: var(--prima); }
+
+:focus-visible { outline: 2px solid var(--tinta); outline-offset: 3px; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.cabecera, main, .pie-pagina {
+  width: min(100% - 2.5rem, var(--ancho));
+  margin-inline: auto;
+}
+
+.cabecera {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 2rem;
+  padding-block: 1.5rem 0;
+  font-size: 0.9375rem; color: var(--pizarra);
+}
+.cabecera p { margin: 0; }
+.marca { color: var(--tinta); font-weight: 600; }
+
+/* El titular: una frase, con la cifra en el color de la prima. */
+.titular { padding-block: clamp(3rem, 9vw, 6.5rem) clamp(2rem, 4vw, 3rem); }
+
+h1 {
+  margin: 0;
+  max-width: 19ch;
+  font: 500 clamp(2.4rem, 6.2vw, 4.75rem)/1.04 var(--serif);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+h1 .cifra { color: var(--prima); white-space: nowrap; }
+
+.entradilla {
+  max-width: 40rem; margin: 1.75rem 0 0;
+  font-size: clamp(1.125rem, 2vw, 1.3rem); line-height: 1.55;
+}
+.contexto { max-width: 40rem; margin: 0.75rem 0 0; color: var(--pizarra); font-size: 1.0625rem; }
+
+/* La gráfica grande. */
+.grafica-cabeza { display: flex; justify-content: flex-end; margin-bottom: 0.5rem; }
+
+.rango { display: flex; gap: 1.25rem; }
+.rango button {
+  appearance: none; border: 0; background: none; padding: 0.25rem 0; cursor: pointer;
+  font: 400 0.9375rem var(--sans); color: var(--pizarra);
+  border-bottom: 1px solid transparent;
+}
+.rango button[aria-pressed="true"] { color: var(--tinta); border-bottom-color: var(--tinta); }
+.rango button:hover { color: var(--tinta); }
+
+.lienzo { position: relative; width: 100%; }
+.lienzo svg { display: block; width: 100%; height: auto; overflow: visible; }
+#lienzo-prima { height: clamp(18rem, 42vw, 27rem); }
+#lienzo-prima svg { height: 100%; }
+#lienzo-prima:focus-visible { outline-offset: 8px; }
+
+.eje text, .etiqueta { font: 400 12.5px var(--sans); fill: var(--pizarra); }
+.eje line { stroke: var(--regla); stroke-width: 1; }
+.eje .cero { stroke: var(--pizarra); }
+.anotacion { font: italic 400 15px var(--serif); fill: var(--tinta); }
+.anotacion-linea { stroke: var(--tinta); stroke-width: 1; }
+.linea-prima { fill: none; stroke: var(--prima); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.punto-prima { fill: var(--prima); }
+.decision { stroke: var(--tinta); stroke-width: 1.25; opacity: 0.55; }
+.guia { stroke: var(--tinta); stroke-width: 1; stroke-dasharray: 2 3; }
+.lectura-fondo { fill: var(--papel); }
+.lectura-fecha { font: 400 13px var(--sans); fill: var(--pizarra); }
+.lectura-valor { font: 600 16px var(--sans); fill: var(--tinta); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .dibujar { stroke-dasharray: var(--largo); stroke-dashoffset: var(--largo); animation: trazo 1.4s cubic-bezier(.3,.7,.2,1) forwards; }
+  @keyframes trazo { to { stroke-dashoffset: 0; } }
+}
+
+.pie, .nota { color: var(--pizarra); font-size: 0.9375rem; max-width: 46rem; }
+.pie { margin: 0.75rem 0 0; }
+
+.tabla-datos { margin-top: 1rem; font-size: 0.9375rem; }
+.tabla-datos summary { cursor: pointer; color: var(--pizarra); width: fit-content; }
+.tabla-datos table { border-collapse: collapse; margin-top: 0.75rem; min-width: 18rem; }
+.tabla-datos th, .tabla-datos td { text-align: left; padding: 0.3rem 2rem 0.3rem 0; border-bottom: 1px solid var(--regla); }
+.tabla-datos th { font-weight: 600; }
+.tabla-datos td + td, .tabla-datos th + th { text-align: right; padding-right: 0; }
+
+/* Las cifras: etiqueta, valor y de dónde sale, sin cajas. */
+.cifras { margin-top: clamp(3rem, 6vw, 4.5rem); }
+.cifras dl {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+  gap: 2rem 2.5rem; margin: 0;
+  padding-top: 1.75rem; border-top: 1px solid var(--tinta);
+}
+.cifras div { display: flex; flex-direction: column; }
+.cifras dt { order: 1; color: var(--pizarra); font-size: 0.9375rem; line-height: 1.35; }
+.cifras dd { margin: 0; }
+.cifras .valor { order: 2; margin-top: 0.35rem; font-size: 1.75rem; font-weight: 600; line-height: 1.15; }
+.cifras .valor small { font-size: 1rem; font-weight: 400; margin-left: 0.2em; }
+.cifras .origen { order: 3; margin-top: 0.35rem; color: var(--pizarra); font-size: 0.875rem; line-height: 1.4; }
+
+/* Las dos secciones con texto y gráfica pequeña. */
+.dos {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 2rem clamp(2rem, 5vw, 4.5rem); align-items: start;
+  margin-top: clamp(4rem, 8vw, 6.5rem);
+}
+h2 {
+  margin: 0;
+  font: 500 clamp(1.6rem, 3vw, 2.15rem)/1.15 var(--serif);
+  letter-spacing: -0.01em; text-wrap: balance;
+}
+.dos p { margin: 1rem 0 0; }
+.lienzo.pequeno svg .linea-tinta { fill: none; stroke: var(--tinta); stroke-width: 2; stroke-linejoin: round; }
+.lienzo.pequeno svg .linea-antes { fill: none; stroke: var(--antes); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.lienzo.pequeno svg .punto-tinta { fill: var(--tinta); }
+.lienzo.pequeno svg .punto-antes { fill: var(--papel); stroke: var(--antes); stroke-width: 1.5; }
+
+.explicacion { margin-top: clamp(4rem, 8vw, 6.5rem); max-width: 46rem; }
+.explicacion .parrafo { margin: 1.25rem 0 0; font: 400 1.3rem/1.6 var(--serif); }
+.explicacion .parrafo.vacio { font: 400 1.0625rem/1.6 var(--sans); color: var(--pizarra); }
+
+.pie-pagina {
+  margin-top: clamp(4.5rem, 9vw, 7rem); padding-block: 2rem 3.5rem;
+  border-top: 1px solid var(--tinta);
+  color: var(--pizarra); font-size: 0.9375rem;
+}
+.pie-pagina h2 { font: 600 1rem/1.4 var(--sans); color: var(--tinta); letter-spacing: 0; }
+.pie-pagina ul { margin: 0.75rem 0 1.25rem; padding-left: 1.1rem; }
+.pie-pagina li { margin-bottom: 0.3rem; }
+.pie-pagina p { max-width: 46rem; margin: 0.5rem 0 0; }
+
+/* A medio construir. */
+.obras h1 { max-width: 20ch; }
+.obras .entradilla code { font-size: 0.95em; background: none; color: var(--prima); }
+
+@media (max-width: 760px) {
+  .dos { grid-template-columns: 1fr; }
+  .grafica-cabeza { justify-content: flex-start; }
+}
