@@ -33,7 +33,70 @@ def cifras(prima_mensual: list[tuple[str, float]], es: list[tuple[str, float]], 
     - url: la "web" de su fuente en fuentes.FUENTES; para lo calculado, la del bono español.
     Usa prima.resumen del peldaño 2.
     """
-    raise NotImplementedError("Peldaño 4: cifras")
+
+    r = prima.resumen(prima_mensual)
+
+    url_es = fuentes.FUENTES["bono_es"]["web"]
+    url_de = fuentes.FUENTES["bono_de"]["web"]
+    url_bce = fuentes.FUENTES["tipos"]["web"]
+
+    resultado = []
+
+    def agregar(id, nombre, valor, unidad, fecha, fuente, url):
+        resultado.append({
+            "id": id,
+            "nombre": nombre,
+            "valor": valor,
+            "unidad": unidad,
+            "fecha": fecha,
+            "fuente": fuente,
+            "url": url,
+        })
+
+    ultimo = r["ultimo"]
+
+    agregar("prima", "Prima de riesgo de España",
+            ultimo[1], "puntos básicos", ultimo[0],
+            PROPIA, url_es)
+
+    agregar("bono_es", "Bono español",
+            es[-1][1], "%", es[-1][0],
+            "BCE", url_es)
+
+    agregar("bono_de", "Bono alemán",
+            de[-1][1], "%", de[-1][0],
+            "BCE", url_de)
+
+    anterior_mes = r.get("hace_un_mes")
+
+    if anterior_mes is not None:
+        cambio = round(ultimo[1] - anterior_mes[1], 1)
+        agregar("cambio_mes", "Variación mensual",
+                cambio, "puntos básicos", ultimo[0],
+                PROPIA, url_es)
+
+    anterior_ano = r.get("hace_un_año",
+                         r.get("hace_un_ano"))
+
+    if anterior_ano is not None:
+        cambio = round(ultimo[1] - anterior_ano[1], 1)
+        agregar("cambio_año", "Variación anual",
+                cambio, "puntos básicos", ultimo[0],
+                PROPIA, url_es)
+
+    maximo = r["maximo"]
+
+    agregar("maximo", "Máximo de la prima de riesgo",
+            maximo[1], "puntos básicos", maximo[0],
+            PROPIA, url_es)
+
+    decision = max(decisiones, key=lambda d: d["fecha"])
+
+    agregar("deposito", "Facilidad de depósito del BCE",
+            decision["deposito"], "%", decision["fecha"],
+            "BCE", url_bce)
+
+    return resultado
 
 
 # ---------- Ya escrito ----------

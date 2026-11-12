@@ -2,7 +2,7 @@
 
 Repositorio de partida del laboratorio del 11 de noviembre de 2026. Es una web que enseña la prima de riesgo de España con datos oficiales del BCE, publicada en internet para que la use alguien que no sabe Python ni tiene tu ordenador. Máster en Finanzas Cuantitativas y Métodos Computacionales, Universidad de las Hespérides.
 
-Mi app: (pega aquí la dirección de tu app en Vercel)
+Mi app: https://prima-de-riesgo-ivory.vercel.app
 
 ## Antes de clase: preparar
 
